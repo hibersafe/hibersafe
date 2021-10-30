@@ -62,7 +62,8 @@ public class StackOverflowUtil {
         for (QuestionDTO item : page.getItems()) {
 
             // Check question body for annotations
-            Pattern pattern = Pattern.compile(Annotations.HIBERNATE_ANNOTATIONS + "|" + Annotations.JPA_ANNOTATIONS);
+            Pattern pattern = Pattern.compile(Annotations.HIBERNATE_ANNOTATIONS + "|" + Annotations.JPA_ANNOTATIONS 
+            		+ "&(" + Exceptions.HIBERNATE_EXCEPTIONS + ")");
 
             Matcher matcher = pattern.matcher(item.getBody());
 
