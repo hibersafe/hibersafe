@@ -73,21 +73,17 @@
   <build>
      <plugins>
     	<plugin>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-maven-plugin</artifactId>
-		<configuration>
-			<finalName>hibersafe</finalName>
-			<mainClass>com.ufrn.HibersafeApp</mainClass>
-		</configuration>
-
-		<executions>
-		    <execution>
-			<goals>
-			    <goal>repackage</goal>
-			</goals>
-		    </execution>
-	       </executions>
-	</plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.1</version>
+	  <configuration>
+	   <archive>
+	    <manifest>
+	      <mainClass>com.ufrn.HibersafeApp</mainClass>
+	    </manifest>
+	   </archive>
+	  </configuration>
+        </plugin>
     </plugins>
   </build>
 </project>
