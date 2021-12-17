@@ -1,4 +1,4 @@
-package com.ufrn.api.controller;
+package com.ufrn.hibersafe.api.controller;
 
 import java.io.IOException;
 
@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ufrn.dtos.PageDTO;
-import com.ufrn.utils.HibernateUtil;
-import com.ufrn.utils.StackOverflowUtil;
+import com.ufrn.hibersafe.dtos.PageDTO;
+import com.ufrn.hibersafe.utils.HibernateUtil;
+import com.ufrn.hibersafe.utils.StackOverflowUtil;
 
 @RestController
 @RequestMapping("/api/stackoverflow")

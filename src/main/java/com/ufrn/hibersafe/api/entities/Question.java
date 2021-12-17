@@ -1,4 +1,4 @@
-package com.ufrn.api.entities;
+package com.ufrn.hibersafe.api.entities;
 
 import java.time.LocalDateTime;
 import java.util.List;

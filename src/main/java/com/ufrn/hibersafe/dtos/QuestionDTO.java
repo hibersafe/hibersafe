@@ -1,4 +1,4 @@
-package com.ufrn.dtos;
+package com.ufrn.hibersafe.dtos;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ufrn.api.entities.Question;
+import com.ufrn.hibersafe.api.entities.Question;
 
 public class QuestionDTO {
 

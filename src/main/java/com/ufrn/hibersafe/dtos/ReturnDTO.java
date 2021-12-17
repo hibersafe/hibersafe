@@ -1,4 +1,4 @@
-package com.ufrn.dtos;
+package com.ufrn.hibersafe.dtos;
 
 import java.util.List;
 

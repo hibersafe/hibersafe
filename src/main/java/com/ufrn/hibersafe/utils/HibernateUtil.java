@@ -1,4 +1,4 @@
-package com.ufrn.utils;
+package com.ufrn.hibersafe.utils;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;

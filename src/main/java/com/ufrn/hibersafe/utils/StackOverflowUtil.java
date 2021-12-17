@@ -1,4 +1,4 @@
-package com.ufrn.utils;
+package com.ufrn.hibersafe.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -19,11 +19,11 @@ import org.hibernate.SessionFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ufrn.api.entities.Question;
-import com.ufrn.api.entities.QuestionAnnotation;
-import com.ufrn.api.entities.QuestionException;
-import com.ufrn.dtos.PageDTO;
-import com.ufrn.dtos.QuestionDTO;
+import com.ufrn.hibersafe.api.entities.Question;
+import com.ufrn.hibersafe.api.entities.QuestionAnnotation;
+import com.ufrn.hibersafe.api.entities.QuestionException;
+import com.ufrn.hibersafe.dtos.PageDTO;
+import com.ufrn.hibersafe.dtos.QuestionDTO;
 
 public class StackOverflowUtil {
 

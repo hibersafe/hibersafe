@@ -1,4 +1,4 @@
-package com.ufrn.api.service;
+package com.ufrn.hibersafe.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ufrn.api.entities.Question;
-import com.ufrn.api.repository.QuestionRepository;
-import com.ufrn.dtos.QuestionDTO;
-import com.ufrn.dtos.ReturnDTO;
+import com.ufrn.hibersafe.api.entities.Question;
+import com.ufrn.hibersafe.api.repository.QuestionRepository;
+import com.ufrn.hibersafe.dtos.QuestionDTO;
+import com.ufrn.hibersafe.dtos.ReturnDTO;
 
 @Service
 @Transactional

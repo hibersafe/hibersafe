@@ -1,4 +1,4 @@
-package com.ufrn.utils;
+package com.ufrn.hibersafe.utils;
 
 public class Annotations {
     public static final String HIBERNATE_ANNOTATIONS = "@AccessType" + "|@Any" + "|@AnyMetaDef" + "|@AnyMetaDefs"

@@ -1,4 +1,4 @@
-package com.ufrn;
+package com.ufrn.hibersafe;
 
 import java.io.IOException;
 import java.sql.Statement;
@@ -13,7 +13,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ufrn.utils.HibernateUtil;
+import com.ufrn.hibersafe.utils.HibernateUtil;
 
 import io.swagger.annotations.Api;
 import springfox.documentation.builders.PathSelectors;

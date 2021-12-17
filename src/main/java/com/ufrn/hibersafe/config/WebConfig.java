@@ -1,4 +1,4 @@
-package com.ufrn.config;
+package com.ufrn.hibersafe.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

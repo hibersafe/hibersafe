@@ -1,4 +1,4 @@
-package com.ufrn.api.controller;
+package com.ufrn.hibersafe.api.controller;
 
 import java.util.List;
 
@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ufrn.api.service.QuestionService;
-import com.ufrn.dtos.AnnotationsEnum;
-import com.ufrn.dtos.ExceptionsEnum;
-import com.ufrn.dtos.QuestionDTO;
-import com.ufrn.dtos.ReturnDTO;
+import com.ufrn.hibersafe.dtos.AnnotationsEnum;
+import com.ufrn.hibersafe.dtos.ExceptionsEnum;
+import com.ufrn.hibersafe.dtos.QuestionDTO;
+import com.ufrn.hibersafe.dtos.ReturnDTO;
+import com.ufrn.hibersafe.service.QuestionService;
 
 import io.swagger.annotations.ApiOperation;
 
