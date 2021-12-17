@@ -71,14 +71,15 @@
   </dependencies>
 
   <build>
-    <plugin>
+     <plugins>
+    	<plugin>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-maven-plugin</artifactId>
 		<configuration>
 			<finalName>hibersafe</finalName>
 			<mainClass>com.ufrn.HibersafeApp</mainClass>
 		</configuration>
-		
+
 		<executions>
 		    <execution>
 			<goals>
@@ -87,5 +88,6 @@
 		    </execution>
 	       </executions>
 	</plugin>
+    </plugins>
   </build>
 </project>
