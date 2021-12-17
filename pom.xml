@@ -80,12 +80,21 @@
         </plugin>
         
         <plugin>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-maven-plugin</artifactId>
-			<configuration>
-				<finalName>hibersafe</finalName>
-			</configuration>
-		</plugin>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-maven-plugin</artifactId>
+		<configuration>
+			<finalName>hibersafe</finalName>
+			<mainClass>com.ufrn.HibersafeApp</mainClass>
+		</configuration>
+		
+		<executions>
+		    <execution>
+			<goals>
+			    <goal>repackage</goal>
+			</goals>
+		    </execution>
+	       </executions>
+	</plugin>
       </plugins>
     </pluginManagement>
   </build>
