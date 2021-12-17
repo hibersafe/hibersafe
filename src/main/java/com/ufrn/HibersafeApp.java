@@ -24,7 +24,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @EnableJpaAuditing
-@SpringBootApplication(scanBasePackages="com.ufrn.api")
+@SpringBootApplication(scanBasePackages="com.ufrn")
 @Api(value = "Hibersafe API")
 @EnableSwagger2
 @EntityScan("com.ufrn.api")
