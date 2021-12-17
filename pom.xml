@@ -79,7 +79,7 @@
 	  <configuration>
 	   <archive>
 	    <manifest>
-	      <mainClass>com.ufrn.HibersafeApp</mainClass>
+	      <mainClass>com.ufrn.hibersafe.HibersafeApp</mainClass>
 	    </manifest>
 	   </archive>
 	  </configuration>
