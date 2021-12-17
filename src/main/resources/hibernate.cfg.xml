@@ -18,7 +18,7 @@
     <property name="connection.password">123456</property>
 
     <!-- JDBC connection pool (use the built-in) -->
-    <property name="connection.pool_size">1</property>
+    <property name="connection.pool_size">100</property>
 
     <!-- SQL dialect -->
     <property name="dialect">org.hibernate.dialect.MySQL5Dialect</property>
@@ -33,8 +33,10 @@
     <property name="hbm2ddl.auto">create</property>
 
     <!-- Names the annotated entity class -->
-    <mapping class="com.ufrn.entities.Answer" />
-    <mapping class="com.ufrn.entities.Question" />
+    <mapping class="com.ufrn.api.entities.Answer" />
+    <mapping class="com.ufrn.api.entities.Question" />
+    <mapping class="com.ufrn.api.entities.QuestionAnnotation" />
+    <mapping class="com.ufrn.api.entities.QuestionException" />
 
   </session-factory>
 

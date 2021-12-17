@@ -8,18 +8,22 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ufrn.dtos.PageDTO;
-import com.ufrn.dtos.QuestionDTO;
-import com.ufrn.entities.Question;
-
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ufrn.api.entities.Question;
+import com.ufrn.api.entities.QuestionAnnotation;
+import com.ufrn.api.entities.QuestionException;
+import com.ufrn.dtos.PageDTO;
+import com.ufrn.dtos.QuestionDTO;
 
 public class StackOverflowUtil {
 
@@ -62,24 +66,54 @@ public class StackOverflowUtil {
         for (QuestionDTO item : page.getItems()) {
 
             // Check question body for annotations
-            Pattern pattern = Pattern.compile(Annotations.HIBERNATE_ANNOTATIONS + "|" + Annotations.JPA_ANNOTATIONS 
-            		+ "&(" + Exceptions.HIBERNATE_EXCEPTIONS + ")");
+            Pattern patternAnnotation = Pattern.compile(Annotations.HIBERNATE_ANNOTATIONS + "|" + Annotations.JPA_ANNOTATIONS);
 
-            Matcher matcher = pattern.matcher(item.getBody());
+            Pattern patternException = Pattern.compile(Exceptions.HIBERNATE_EXCEPTIONS);
+            
+            Matcher matcher1 = patternAnnotation.matcher(item.getBody());
+            Matcher matcher2 = patternException.matcher(item.getBody());
+            
+            List<String> annotations = new ArrayList<String>();
+            List<String> exceptions = new ArrayList<String>();
 
-            // If there's an annotation on the question
-            if (matcher.find()) {
-                // Convert questionDTO to Question entity
+            // If there's an annotation and an exception on the question
+            if (matcher1.find() && matcher2.find()) {
+            	matcher1.reset();
+            	matcher2.reset();
+            	
+            	// Convert questionDTO to Question entity
                 Question question = item.toQuestion();
 
                 // Save Question entity
                 session.save(question);
-
+                
                 // If QuestionDTO has answers, convert them to entities and save them
                 if (item.getAnswers() != null) {
                     item.getAnswers().stream().map(answer -> answer.toAnswer(question)).forEach(session::save);
                 }
+            	
+            	while(matcher1.find()){
+            		if (!annotations.contains(matcher1.group())){
+            			annotations.add(matcher1.group());
+            		}
+            	}
+            	
+            	while(matcher2.find()){
+            		if (!exceptions.contains(matcher2.group())){
+            			exceptions.add(matcher2.group());
+            		}
+            	}
+            	
+            	for (String annotation : annotations) {
+            		session.save(new QuestionAnnotation(question, annotation));
+            	}
+            	
+            	for (String exception : exceptions) {
+        			session.save(new QuestionException(question, exception));
+                    
+        		}
             }
+            
         }
 
         session.getTransaction().commit();
