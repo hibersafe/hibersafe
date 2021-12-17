@@ -27,8 +27,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication(scanBasePackages="com.ufrn")
 @Api(value = "Hibersafe API")
 @EnableSwagger2
-@EntityScan("com.ufrn.api")
-@EnableJpaRepositories("com.ufrn.api")
+@EntityScan("com.ufrn")
+@EnableJpaRepositories("com.ufrn")
 public class HibersafeApp {
     public static void main(String[] args) throws IOException, InterruptedException {
     	
