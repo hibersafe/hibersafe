@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ufrn.api.service.QuestionService;
@@ -43,11 +44,11 @@ public class QuestionController {
 		return new ResponseEntity<List<QuestionDTO>>(questions, HttpStatus.OK);
 	}
 	
-	@GetMapping("/exception/{exception}")
-	@ApiOperation(value = "Get questions by exception", notes = "Select an exception to find questions from StackOverflow according to the following criteria: \n1. Exception appears on question text \n2. At least one answer was validated or upvoted ")
-	public ResponseEntity<List<ReturnDTO>> getQuestionsByException(@PathVariable ExceptionsEnum exception) {
+	@GetMapping("/exceptionEnum/{exceptionEnum}")
+	@ApiOperation(value = "Get questions by exceptionEnum", notes = "Select an exceptionEnum to find questions from StackOverflow according to the following criteria: \n1. Exception appears on question text \n2. At least one answer was validated or upvoted ")
+	public ResponseEntity<List<ReturnDTO>> getQuestionsByException(@PathVariable ExceptionsEnum exceptionEnum, @RequestParam(required=false) String message) {
 		
-		List<ReturnDTO> questions = questionService.getQuestionsByException(exception.toString());
+		List<ReturnDTO> questions = questionService.getQuestionsByException(exceptionEnum, message);
 		
 		return new ResponseEntity<List<ReturnDTO>>(questions, HttpStatus.OK);
 	}

@@ -1,11 +1,15 @@
 package com.ufrn.api.service;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.text.similarity.JaccardSimilarity;
+import org.apache.commons.text.similarity.LevenshteinDistance;
+import org.apache.commons.text.similarity.LongestCommonSubsequence;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +19,15 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ufrn.api.entities.Log;
 import com.ufrn.api.entities.Question;
 import com.ufrn.api.repository.QuestionRepository;
+import com.ufrn.dtos.ExceptionsEnum;
 import com.ufrn.dtos.QuestionDTO;
+import com.ufrn.dtos.QuestionResponseDTO;
 import com.ufrn.dtos.ReturnDTO;
+
+import net.ricecode.similarity.JaroWinklerStrategy;
+import net.ricecode.similarity.SimilarityStrategy;
+import net.ricecode.similarity.StringSimilarityService;
+import net.ricecode.similarity.StringSimilarityServiceImpl;
 
 @Service
 @Transactional
@@ -44,20 +55,80 @@ public class QuestionService {
 		return questionsDTO;
 	}
 
-	public List<ReturnDTO> getQuestionsByException(String exception) {
-		List<Object[]> result = questionRepository.findQuestionByException(exception);
+//	public List<ReturnDTO> getQuestionsByExceptionAlternative(ExceptionsEnum exceptionEnum, String message) {
+//		List<Object[]> result = questionRepository.findQuestionByException(exceptionEnum.getName());
+//		
+//		List<ReturnDTO> returnDTO  = new ArrayList<ReturnDTO>();
+//		
+//		Session session = sessionFactory.openSession();
+//        session.beginTransaction();
+//		
+//		for (Object[] r : result) {
+//			List<String> idsList = Arrays.asList(r[1].toString().split(", "));
+//			idsList = idsList.stream().map( id -> (id != null) ? "https://stackoverflow.com/questions/"+id : null ).collect(Collectors.toList());
+//			if (r[2] != null && message.length() > 0 && (
+//					(r[2].toString().toUpperCase().contains("CAUSED BY:") && message.toUpperCase().contains("CAUSED BY:")) || 
+//					(r[2].toString().toUpperCase().contains(exceptionEnum.getExPackage().toUpperCase()) && message.toUpperCase().contains(exceptionEnum.getExPackage().toUpperCase())) ||
+//					(r[2].toString().toUpperCase().contains("EXCEPTION IN THREAD: ") && message.toUpperCase().contains("EXCEPTION IN THREAD: "))
+//					)) {
+//				returnDTO.add(new ReturnDTO(r[0].toString(), idsList.size(), idsList, r[2].toString()));
+//				session.save(new Log(Calendar.getInstance(), r[1].toString(), idsList.size(), r[0].toString(), exceptionEnum.getName()));
+//			}
+//		}
+//		
+//		if (result.isEmpty()) {
+//			session.save(new Log(Calendar.getInstance(), null, 0, null, exceptionEnum.getName()));
+//		}
+//        
+//        session.getTransaction().commit();
+//        session.close();
+//		
+//		return returnDTO;
+//	}
+	
+	public List<ReturnDTO> getQuestionsByException(ExceptionsEnum exceptionEnum, String message) {
+		List<Object[]> result = questionRepository.findQuestionByExceptionAlternative(exceptionEnum.getName());
 		
+		List<QuestionResponseDTO> questionResponseDTO  = new ArrayList<QuestionResponseDTO>();
+		List<String> annotations = new ArrayList<String>();
 		List<ReturnDTO> returnDTO  = new ArrayList<ReturnDTO>();
 		
 		Session session = sessionFactory.openSession();
         session.beginTransaction();
+        
+        LongestCommonSubsequence lcs = new LongestCommonSubsequence();
 		
 		for (Object[] r : result) {
-			List<String> idsList = Arrays.asList(r[1].toString().split(", "));
-			idsList = idsList.stream().map( id -> (id != null) ? "https://stackoverflow.com/questions/"+id : null ).collect(Collectors.toList());
-			returnDTO.add(new ReturnDTO(r[0].toString(), idsList.size(), idsList));
-			session.save(new Log(Calendar.getInstance(), r[1].toString(), idsList.size(), r[0].toString(), exception));
+			String subsequence = String.valueOf(lcs.longestCommonSubsequence(message, r[2].toString()));
+			if ((r[2] != null && message != null && message.length() > 0 && (
+					//(r[2].toString().toUpperCase().contains("CAUSED BY:") && message.toUpperCase().contains("CAUSED BY:")) || 
+					//(r[2].toString().toUpperCase().contains(exceptionEnum.getExPackage().toUpperCase()) && message.toUpperCase().contains(exceptionEnum.getExPackage().toUpperCase())) ||
+					//(r[2].toString().toUpperCase().contains("EXCEPTION IN THREAD: ") && message.toUpperCase().contains("EXCEPTION IN THREAD: "))
+					//r[2].toString().toUpperCase().contains(message.toUpperCase()) || 
+					subsequence.contains(exceptionEnum.getExPackage()))
+					)
+					|| r[2] != null && (message == null || message.length() == 0)) {
+				questionResponseDTO.add(new QuestionResponseDTO(r[0].toString(), ((BigInteger) r[1]).intValue(), subsequence.length()));
+				if (!annotations.contains(r[0].toString())) {
+					annotations.add(r[0].toString());
+				}
+			}
 		}
+		
+		for (String annotation : annotations) {
+			List<String> idsList = new ArrayList<String>();
+			Collections.sort(questionResponseDTO, (q1, q2) -> q2.getSimilarityLength().compareTo(q1.getSimilarityLength()));
+			idsList = questionResponseDTO.stream().map( q -> (q.getAnnotation().equals(annotation)) ? "https://stackoverflow.com/questions/"+q.getId() : null ).collect(Collectors.toList());
+			idsList.removeIf(i -> i == null);
+			returnDTO.add(new ReturnDTO(annotation, idsList.size(), idsList));
+			session.save(new Log(Calendar.getInstance(), String.join(", ", idsList), idsList.size(), annotation, exceptionEnum.getName()));
+		}
+		
+		if (result.isEmpty()) {
+			session.save(new Log(Calendar.getInstance(), null, 0, null, exceptionEnum.getName()));
+		}
+		
+		Collections.sort(returnDTO, (r1, r2) -> r2.getCount().compareTo(r1.getCount()));
         
         session.getTransaction().commit();
         session.close();
