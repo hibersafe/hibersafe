@@ -7,8 +7,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.text.similarity.JaccardSimilarity;
-import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.apache.commons.text.similarity.LongestCommonSubsequence;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -22,12 +20,9 @@ import com.ufrn.api.repository.QuestionRepository;
 import com.ufrn.dtos.ExceptionsEnum;
 import com.ufrn.dtos.QuestionDTO;
 import com.ufrn.dtos.QuestionResponseDTO;
+import com.ufrn.dtos.ResponseDTO;
 import com.ufrn.dtos.ReturnDTO;
-
-import net.ricecode.similarity.JaroWinklerStrategy;
-import net.ricecode.similarity.SimilarityStrategy;
-import net.ricecode.similarity.StringSimilarityService;
-import net.ricecode.similarity.StringSimilarityServiceImpl;
+import com.ufrn.dtos.TopSimilarityDTO;
 
 @Service
 @Transactional
@@ -86,12 +81,13 @@ public class QuestionService {
 //		return returnDTO;
 //	}
 	
-	public List<ReturnDTO> getQuestionsByException(ExceptionsEnum exceptionEnum, String message) {
+	public ResponseDTO getQuestionsByException(ExceptionsEnum exceptionEnum, String message) {
 		List<Object[]> result = questionRepository.findQuestionByExceptionAlternative(exceptionEnum.getName());
 		
 		List<QuestionResponseDTO> questionResponseDTO  = new ArrayList<QuestionResponseDTO>();
 		List<String> annotations = new ArrayList<String>();
 		List<ReturnDTO> returnDTO  = new ArrayList<ReturnDTO>();
+		List<TopSimilarityDTO> topSimilarityDTO = new ArrayList<TopSimilarityDTO>();
 		
 		Session session = sessionFactory.openSession();
         session.beginTransaction();
@@ -115,9 +111,18 @@ public class QuestionService {
 			}
 		}
 		
+		Collections.sort(questionResponseDTO, (q1, q2) -> q2.getSimilarityLength().compareTo(q1.getSimilarityLength()));
+		
+		List<QuestionResponseDTO> topTen = new ArrayList<QuestionResponseDTO>();
+		if (questionResponseDTO.size() > 0) {
+			topTen = questionResponseDTO.subList(0, questionResponseDTO.size() > 10 ? 10 : questionResponseDTO.size());
+			for (QuestionResponseDTO q : topTen) {
+				topSimilarityDTO.add(new TopSimilarityDTO(q.getAnnotation(), "https://stackoverflow.com/questions/"+q.getId()));
+			}
+		}
+		
 		for (String annotation : annotations) {
 			List<String> idsList = new ArrayList<String>();
-			Collections.sort(questionResponseDTO, (q1, q2) -> q2.getSimilarityLength().compareTo(q1.getSimilarityLength()));
 			idsList = questionResponseDTO.stream().map( q -> (q.getAnnotation().equals(annotation)) ? "https://stackoverflow.com/questions/"+q.getId() : null ).collect(Collectors.toList());
 			idsList.removeIf(i -> i == null);
 			returnDTO.add(new ReturnDTO(annotation, idsList.size(), idsList));
@@ -133,7 +138,7 @@ public class QuestionService {
         session.getTransaction().commit();
         session.close();
 		
-		return returnDTO;
+		return new ResponseDTO(topSimilarityDTO, returnDTO);
 	}
 
 	

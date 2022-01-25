@@ -15,7 +15,7 @@ import com.ufrn.api.service.QuestionService;
 import com.ufrn.dtos.AnnotationsEnum;
 import com.ufrn.dtos.ExceptionsEnum;
 import com.ufrn.dtos.QuestionDTO;
-import com.ufrn.dtos.ReturnDTO;
+import com.ufrn.dtos.ResponseDTO;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -46,11 +46,11 @@ public class QuestionController {
 	
 	@GetMapping("/exceptionEnum/{exceptionEnum}")
 	@ApiOperation(value = "Get questions by exceptionEnum", notes = "Select an exceptionEnum to find questions from StackOverflow according to the following criteria: \n1. Exception appears on question text \n2. At least one answer was validated or upvoted ")
-	public ResponseEntity<List<ReturnDTO>> getQuestionsByException(@PathVariable ExceptionsEnum exceptionEnum, @RequestParam(required=false) String message) {
+	public ResponseEntity<ResponseDTO> getQuestionsByException(@PathVariable ExceptionsEnum exceptionEnum, @RequestParam(required=false) String message) {
 		
-		List<ReturnDTO> questions = questionService.getQuestionsByException(exceptionEnum, message);
+		ResponseDTO questions = questionService.getQuestionsByException(exceptionEnum, message);
 		
-		return new ResponseEntity<List<ReturnDTO>>(questions, HttpStatus.OK);
+		return new ResponseEntity<ResponseDTO>(questions, HttpStatus.OK);
 	}
 
 }
