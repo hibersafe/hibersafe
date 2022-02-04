@@ -46,5 +46,15 @@ public interface QuestionRepository extends JpaRepository<Question, Integer>{
 			+ "(a.isAccepted = 1 OR a.score > 0)  "
 			+ "ORDER BY qa.annotation", nativeQuery = true)
 	public List<Object[]> findQuestionByExceptionAlternative(@Param("exception") String exception);
+	
+	@Query(value = "SELECT  DISTINCT(qa.annotation), q.id, q.body "
+			+ "FROM question q "
+			+ "JOIN question_annotation qa ON q.id = qa.question_id "
+			+ "JOIN question_exception qe ON q.id = qe.question_id "
+			+ "JOIN answer a ON q.id = a.question_id "
+			+ "WHERE "
+			+ "(a.isAccepted = 1 OR a.score > 0)  "
+			+ "ORDER BY qa.annotation", nativeQuery = true)
+	public List<Object[]> findAllQuestions();
 
 }

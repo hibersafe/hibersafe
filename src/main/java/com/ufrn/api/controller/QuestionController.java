@@ -47,9 +47,9 @@ public class QuestionController {
 	
 	@PostMapping("/exceptionEnum/{exceptionEnum}")
 	@ApiOperation(value = "Get questions by exceptionEnum", notes = "Select an exceptionEnum to find questions from StackOverflow according to the following criteria: \n1. Exception appears on question text \n2. At least one answer was validated or upvoted ")
-	public ResponseEntity<ResponseDTO> getQuestionsByException(@PathVariable ExceptionsEnum exceptionEnum, @RequestBody(required=false) String message) {
+	public ResponseEntity<ResponseDTO> getQuestionsByException(@RequestBody(required=false) String message) {
 		
-		ResponseDTO questions = questionService.getQuestionsByException(exceptionEnum, message);
+		ResponseDTO questions = questionService.getQuestionsByException(message);
 		
 		return new ResponseEntity<ResponseDTO>(questions, HttpStatus.OK);
 	}

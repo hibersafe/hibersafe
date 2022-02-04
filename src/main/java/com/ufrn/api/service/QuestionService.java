@@ -51,8 +51,8 @@ public class QuestionService {
 	}
 
 	
-	public ResponseDTO getQuestionsByException(ExceptionsEnum exceptionEnum, String message) {
-		List<Object[]> result = questionRepository.findQuestionByExceptionAlternative(exceptionEnum.getName());
+	public ResponseDTO getQuestionsByException(String message) {
+		List<Object[]> result = questionRepository.findAllQuestions();
 		
 		List<QuestionResponseDTO> questionResponseDTO  = new ArrayList<QuestionResponseDTO>();
 		List<String> annotations = new ArrayList<String>();
@@ -101,11 +101,11 @@ public class QuestionService {
 			idsList = questionResponseDTO.stream().map( q -> (q.getAnnotation().equals(annotation)) ? "https://stackoverflow.com/questions/"+q.getId() : null ).collect(Collectors.toList());
 			idsList.removeIf(i -> i == null);
 			returnDTO.add(new ReturnDTO(annotation, idsList.size(), idsList));
-			session.save(new Log(Calendar.getInstance(), String.join(", ", idsList), idsList.size(), annotation, exceptionEnum.getName()));
+			session.save(new Log(Calendar.getInstance(), String.join(", ", idsList), idsList.size(), annotation, null));
 		}
 		
 		if (result.isEmpty()) {
-			session.save(new Log(Calendar.getInstance(), null, 0, null, exceptionEnum.getName()));
+			session.save(new Log(Calendar.getInstance(), null, 0, null, null));
 		}
 		
 		Collections.sort(returnDTO, (r1, r2) -> r2.getCount().compareTo(r1.getCount()));
