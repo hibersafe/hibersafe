@@ -65,19 +65,12 @@ public class QuestionService {
         LongestCommonSubsequence lcs = new LongestCommonSubsequence();
 		
 		for (Object[] r : result) {
-			/*String subsequence = String.valueOf(lcs.longestCommonSubsequence(message, r[2].toString()));
+			String subsequence = String.valueOf(lcs.longestCommonSubsequence(message, r[2].toString()));
 			Integer indexCausedBy = r[2].toString().toUpperCase().indexOf("CAUSED BY:");
 			Integer indexExceptionInThread = r[2].toString().toUpperCase().indexOf("EXCEPTION IN THREAD");
 			
 			if (indexCausedBy >= 0 || indexExceptionInThread >= 0) {
 				questionResponseDTO.add(new QuestionResponseDTO(r[0].toString(), ((BigInteger) r[1]).intValue(), subsequence.length()));
-				if (!annotations.contains(r[0].toString())) {
-					annotations.add(r[0].toString());
-				}
-			}*/
-			
-			if (r[2].toString().contains(message)) {
-				questionResponseDTO.add(new QuestionResponseDTO(r[0].toString(), ((BigInteger) r[1]).intValue(), 0));
 				if (!annotations.contains(r[0].toString())) {
 					annotations.add(r[0].toString());
 				}
