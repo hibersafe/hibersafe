@@ -50,36 +50,6 @@ public class QuestionService {
 		return questionsDTO;
 	}
 
-//	public List<ReturnDTO> getQuestionsByExceptionAlternative(ExceptionsEnum exceptionEnum, String message) {
-//		List<Object[]> result = questionRepository.findQuestionByException(exceptionEnum.getName());
-//		
-//		List<ReturnDTO> returnDTO  = new ArrayList<ReturnDTO>();
-//		
-//		Session session = sessionFactory.openSession();
-//        session.beginTransaction();
-//		
-//		for (Object[] r : result) {
-//			List<String> idsList = Arrays.asList(r[1].toString().split(", "));
-//			idsList = idsList.stream().map( id -> (id != null) ? "https://stackoverflow.com/questions/"+id : null ).collect(Collectors.toList());
-//			if (r[2] != null && message.length() > 0 && (
-//					(r[2].toString().toUpperCase().contains("CAUSED BY:") && message.toUpperCase().contains("CAUSED BY:")) || 
-//					(r[2].toString().toUpperCase().contains(exceptionEnum.getExPackage().toUpperCase()) && message.toUpperCase().contains(exceptionEnum.getExPackage().toUpperCase())) ||
-//					(r[2].toString().toUpperCase().contains("EXCEPTION IN THREAD: ") && message.toUpperCase().contains("EXCEPTION IN THREAD: "))
-//					)) {
-//				returnDTO.add(new ReturnDTO(r[0].toString(), idsList.size(), idsList, r[2].toString()));
-//				session.save(new Log(Calendar.getInstance(), r[1].toString(), idsList.size(), r[0].toString(), exceptionEnum.getName()));
-//			}
-//		}
-//		
-//		if (result.isEmpty()) {
-//			session.save(new Log(Calendar.getInstance(), null, 0, null, exceptionEnum.getName()));
-//		}
-//        
-//        session.getTransaction().commit();
-//        session.close();
-//		
-//		return returnDTO;
-//	}
 	
 	public ResponseDTO getQuestionsByException(ExceptionsEnum exceptionEnum, String message) {
 		List<Object[]> result = questionRepository.findQuestionByExceptionAlternative(exceptionEnum.getName());
@@ -95,16 +65,19 @@ public class QuestionService {
         LongestCommonSubsequence lcs = new LongestCommonSubsequence();
 		
 		for (Object[] r : result) {
-			String subsequence = String.valueOf(lcs.longestCommonSubsequence(message, r[2].toString()));
-			if ((r[2] != null && message != null && message.length() > 0 && (
-					//(r[2].toString().toUpperCase().contains("CAUSED BY:") && message.toUpperCase().contains("CAUSED BY:")) || 
-					//(r[2].toString().toUpperCase().contains(exceptionEnum.getExPackage().toUpperCase()) && message.toUpperCase().contains(exceptionEnum.getExPackage().toUpperCase())) ||
-					//(r[2].toString().toUpperCase().contains("EXCEPTION IN THREAD: ") && message.toUpperCase().contains("EXCEPTION IN THREAD: "))
-					//r[2].toString().toUpperCase().contains(message.toUpperCase()) || 
-					subsequence.contains(exceptionEnum.getExPackage()))
-					)
-					|| r[2] != null && (message == null || message.length() == 0)) {
+			/*String subsequence = String.valueOf(lcs.longestCommonSubsequence(message, r[2].toString()));
+			Integer indexCausedBy = r[2].toString().toUpperCase().indexOf("CAUSED BY:");
+			Integer indexExceptionInThread = r[2].toString().toUpperCase().indexOf("EXCEPTION IN THREAD");
+			
+			if (indexCausedBy >= 0 || indexExceptionInThread >= 0) {
 				questionResponseDTO.add(new QuestionResponseDTO(r[0].toString(), ((BigInteger) r[1]).intValue(), subsequence.length()));
+				if (!annotations.contains(r[0].toString())) {
+					annotations.add(r[0].toString());
+				}
+			}*/
+			
+			if (r[2].toString().contains(message)) {
+				questionResponseDTO.add(new QuestionResponseDTO(r[0].toString(), ((BigInteger) r[1]).intValue(), 0));
 				if (!annotations.contains(r[0].toString())) {
 					annotations.add(r[0].toString());
 				}
@@ -113,12 +86,21 @@ public class QuestionService {
 		
 		Collections.sort(questionResponseDTO, (q1, q2) -> q2.getSimilarityLength().compareTo(q1.getSimilarityLength()));
 		
-		List<QuestionResponseDTO> topTen = new ArrayList<QuestionResponseDTO>();
+		String annotationsList = "";
+		List<Integer> idsListTop = new ArrayList<Integer>();
 		if (questionResponseDTO.size() > 0) {
-			topTen = questionResponseDTO.subList(0, questionResponseDTO.size() > 10 ? 10 : questionResponseDTO.size());
-			for (QuestionResponseDTO q : topTen) {
-				topSimilarityDTO.add(new TopSimilarityDTO(q.getAnnotation(), "https://stackoverflow.com/questions/"+q.getId()));
+			for (QuestionResponseDTO question : questionResponseDTO) {
+				if (!idsListTop.contains(question.getId())) {
+					idsListTop.add(question.getId());
+					List<QuestionResponseDTO> sameAnnotation = questionResponseDTO.stream().filter(q -> q.getId().equals(question.getId())).collect(Collectors.toList());
+					for (QuestionResponseDTO s : sameAnnotation) {
+						annotationsList = annotationsList.length() == 0 ? annotationsList.concat(s.getAnnotation()) : annotationsList.concat(", " + s.getAnnotation());
+					}
+					topSimilarityDTO.add(new TopSimilarityDTO(annotationsList, "https://stackoverflow.com/questions/"+question.getId()));
+				}
 			}
+			
+			topSimilarityDTO = topSimilarityDTO.subList(0, topSimilarityDTO.size() > 10 ? 10 : topSimilarityDTO.size());
 		}
 		
 		for (String annotation : annotations) {
@@ -140,7 +122,4 @@ public class QuestionService {
 		
 		return new ResponseDTO(topSimilarityDTO, returnDTO);
 	}
-
-	
-	
 }
