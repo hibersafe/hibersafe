@@ -50,25 +50,15 @@ public class QuestionService {
 		List<Object[]> result = questionRepository.findQuestionByException(exceptionEnum.getName());
 		
 		List<ReturnDTO> returnDTO  = new ArrayList<ReturnDTO>();
-		List<String> anotacoes = new ArrayList<String>();
 		
 		Session session = sessionFactory.openSession();
         session.beginTransaction();
 		
 		for (Object[] r : result) {
-			if (!anotacoes.contains(r[0].toString())) {
-				List<String> idsList = Arrays.asList(r[1].toString().split(", "));
-				idsList = idsList.stream().map( id -> (id != null) ? "https://stackoverflow.com/questions/"+id : null ).collect(Collectors.toList());
-				if (r[2] != null && message.length() > 0 && (
-						(r[2].toString().toUpperCase().contains("CAUSED BY:") && message.toUpperCase().contains("CAUSED BY:")) || 
-						(r[2].toString().toUpperCase().contains(exceptionEnum.getExPackage().toUpperCase()) && message.toUpperCase().contains(exceptionEnum.getExPackage().toUpperCase())) ||
-						(r[2].toString().toUpperCase().contains("EXCEPTION IN THREAD: ") && message.toUpperCase().contains("EXCEPTION IN THREAD: "))
-						)) {
-					returnDTO.add(new ReturnDTO(r[0].toString(), idsList.size(), idsList));
-					session.save(new Log(Calendar.getInstance(), r[1].toString(), idsList.size(), r[0].toString(), exceptionEnum.getName()));
-					anotacoes.add(r[0].toString());
-				}
-			}
+			List<String> idsList = Arrays.asList(r[1].toString().split(", "));
+			idsList = idsList.stream().map( id -> (id != null) ? "https://stackoverflow.com/questions/"+id : null ).collect(Collectors.toList());
+			returnDTO.add(new ReturnDTO(r[0].toString(), idsList.size(), idsList));
+			session.save(new Log(Calendar.getInstance(), r[1].toString(), idsList.size(), r[0].toString(), exceptionEnum.getName()));
 		}
 		
 		if (result.isEmpty()) {
