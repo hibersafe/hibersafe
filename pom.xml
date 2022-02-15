@@ -10,10 +10,8 @@
   <name>hibersafe</name>
 
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.release>11</maven.compiler.release>
-    <java.version>11</java.version>
-    <maven.compiler.source>11</maven.compiler.source>
+	<java.version>1.8</java.version>
+	<webpack.env>dev</webpack.env>
   </properties>
 
   <dependencies>
