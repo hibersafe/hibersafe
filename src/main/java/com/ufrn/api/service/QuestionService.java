@@ -73,21 +73,23 @@ public class QuestionService {
 		
 		Collections.sort(questionResponseDTO, (q1, q2) -> q2.getSimilarityLength().compareTo(q1.getSimilarityLength()));
 		
-		String annotationsList = "";
-		List<Integer> idsListTop = new ArrayList<Integer>();
-		if (questionResponseDTO.size() > 0) {
-			for (QuestionResponseDTO question : questionResponseDTO) {
-				if (!idsListTop.contains(question.getId())) {
-					idsListTop.add(question.getId());
-					List<QuestionResponseDTO> sameAnnotation = questionResponseDTO.stream().filter(q -> q.getId().equals(question.getId())).collect(Collectors.toList());
-					for (QuestionResponseDTO s : sameAnnotation) {
-						annotationsList = annotationsList.length() == 0 ? annotationsList.concat(s.getAnnotation()) : annotationsList.concat(", " + s.getAnnotation());
+		if ((message != null && message.length() > 0) && !message.equals("{}")) {
+			String annotationsList = "";
+			List<Integer> idsListTop = new ArrayList<Integer>();
+			if (questionResponseDTO.size() > 0) {
+				for (QuestionResponseDTO question : questionResponseDTO) {
+					if (!idsListTop.contains(question.getId())) {
+						idsListTop.add(question.getId());
+						List<QuestionResponseDTO> sameAnnotation = questionResponseDTO.stream().filter(q -> q.getId().equals(question.getId())).collect(Collectors.toList());
+						for (QuestionResponseDTO s : sameAnnotation) {
+							annotationsList = annotationsList.length() == 0 ? annotationsList.concat(s.getAnnotation()) : annotationsList.concat(", " + s.getAnnotation());
+						}
+						topSimilarityDTO.add(new TopSimilarityDTO(annotationsList, "https://stackoverflow.com/questions/"+question.getId()));
 					}
-					topSimilarityDTO.add(new TopSimilarityDTO(annotationsList, "https://stackoverflow.com/questions/"+question.getId()));
 				}
+				
+				topSimilarityDTO = topSimilarityDTO.subList(0, topSimilarityDTO.size() > 10 ? 10 : topSimilarityDTO.size());
 			}
-			
-			topSimilarityDTO = topSimilarityDTO.subList(0, topSimilarityDTO.size() > 10 ? 10 : topSimilarityDTO.size());
 		}
 		
 		for (String annotation : annotations) {
