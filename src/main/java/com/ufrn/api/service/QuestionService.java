@@ -2,7 +2,6 @@ package com.ufrn.api.service;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ufrn.api.entities.Log;
 import com.ufrn.api.entities.Question;
 import com.ufrn.api.repository.LogRepository;
 import com.ufrn.api.repository.QuestionRepository;
@@ -97,11 +95,11 @@ public class QuestionService {
 			idsList = questionResponseDTO.stream().map( q -> (q.getAnnotation().equals(annotation)) ? "https://stackoverflow.com/questions/"+q.getId() : null ).collect(Collectors.toList());
 			idsList.removeIf(i -> i == null);
 			returnDTO.add(new ReturnDTO(annotation, idsList.size(), idsList));
-			logRepository.save(new Log(Calendar.getInstance(), String.join(", ", idsList), idsList.size(), annotation, exceptionEnum.getName()));
+			//logRepository.save(new Log(Calendar.getInstance(), String.join(", ", idsList), idsList.size(), annotation, exceptionEnum.getName()));
 		}
 		
 		if (result.isEmpty()) {
-			logRepository.save(new Log(Calendar.getInstance(), null, 0, null, exceptionEnum.getName()));
+			//logRepository.save(new Log(Calendar.getInstance(), null, 0, null, exceptionEnum.getName()));
 		}
 		
 		Collections.sort(returnDTO, (r1, r2) -> r2.getCount().compareTo(r1.getCount()));
