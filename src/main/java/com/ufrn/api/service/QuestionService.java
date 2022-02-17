@@ -8,14 +8,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.text.similarity.LongestCommonSubsequence;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ufrn.api.entities.Log;
 import com.ufrn.api.entities.Question;
+import com.ufrn.api.repository.LogRepository;
 import com.ufrn.api.repository.QuestionRepository;
 import com.ufrn.dtos.ExceptionsEnum;
 import com.ufrn.dtos.QuestionDTO;
@@ -32,7 +31,7 @@ public class QuestionService {
 	QuestionRepository questionRepository;
 	
 	@Autowired
-	SessionFactory sessionFactory;
+	LogRepository logRepository;
 
 	public List<QuestionDTO> getQuestions() {
 		List<Question> questions = questionRepository.findAll();
@@ -58,9 +57,6 @@ public class QuestionService {
 		List<String> annotations = new ArrayList<String>();
 		List<ReturnDTO> returnDTO  = new ArrayList<ReturnDTO>();
 		List<TopSimilarityDTO> topSimilarityDTO = new ArrayList<TopSimilarityDTO>();
-		
-		Session session = sessionFactory.openSession();
-        session.beginTransaction();
         
         LongestCommonSubsequence lcs = new LongestCommonSubsequence();
 		
@@ -101,17 +97,14 @@ public class QuestionService {
 			idsList = questionResponseDTO.stream().map( q -> (q.getAnnotation().equals(annotation)) ? "https://stackoverflow.com/questions/"+q.getId() : null ).collect(Collectors.toList());
 			idsList.removeIf(i -> i == null);
 			returnDTO.add(new ReturnDTO(annotation, idsList.size(), idsList));
-			session.save(new Log(Calendar.getInstance(), String.join(", ", idsList), idsList.size(), annotation, exceptionEnum.getName()));
+			logRepository.save(new Log(Calendar.getInstance(), String.join(", ", idsList), idsList.size(), annotation, exceptionEnum.getName()));
 		}
 		
 		if (result.isEmpty()) {
-			session.save(new Log(Calendar.getInstance(), null, 0, null, exceptionEnum.getName()));
+			logRepository.save(new Log(Calendar.getInstance(), null, 0, null, exceptionEnum.getName()));
 		}
 		
 		Collections.sort(returnDTO, (r1, r2) -> r2.getCount().compareTo(r1.getCount()));
-        
-        session.getTransaction().commit();
-        session.close();
 		
 		return new ResponseDTO(topSimilarityDTO, returnDTO);
 	}

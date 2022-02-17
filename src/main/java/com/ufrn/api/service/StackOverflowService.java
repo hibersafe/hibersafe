@@ -1,4 +1,4 @@
-package com.ufrn.utils;
+package com.ufrn.api.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -14,24 +14,37 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ufrn.api.entities.Question;
 import com.ufrn.api.entities.QuestionAnnotation;
 import com.ufrn.api.entities.QuestionException;
+import com.ufrn.api.repository.AnswerRepository;
+import com.ufrn.api.repository.QuestionAnnotationRepository;
+import com.ufrn.api.repository.QuestionExceptionRepository;
+import com.ufrn.api.repository.QuestionRepository;
 import com.ufrn.dtos.PageDTO;
 import com.ufrn.dtos.QuestionDTO;
+import com.ufrn.utils.Annotations;
+import com.ufrn.utils.Exceptions;
 
-public class StackOverflowUtil {
+@Service
+public class StackOverflowService {
 
-    SessionFactory sessionFactory;
-
-    public StackOverflowUtil(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    @Autowired
+    QuestionRepository questionRepository;
+    
+    @Autowired
+    AnswerRepository answerRepository;
+    
+    @Autowired
+    QuestionAnnotationRepository questionAnnotationRepository;
+    
+    @Autowired
+    QuestionExceptionRepository questionExceptionRepository;
 
     public PageDTO sendHttpRequest(int page) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
@@ -58,10 +71,6 @@ public class StackOverflowUtil {
     }
 
     public void process(PageDTO page) {
-        Session session = sessionFactory.openSession();
-
-        session.beginTransaction();
-
         // Iterate through all pages
         for (QuestionDTO item : page.getItems()) {
 
@@ -85,11 +94,11 @@ public class StackOverflowUtil {
                 Question question = item.toQuestion();
 
                 // Save Question entity
-                session.save(question);
+                questionRepository.save(question);
                 
                 // If QuestionDTO has answers, convert them to entities and save them
                 if (item.getAnswers() != null) {
-                    item.getAnswers().stream().map(answer -> answer.toAnswer(question)).forEach(session::save);
+                    item.getAnswers().stream().map(answer -> answer.toAnswer(question)).forEach(answerRepository::save);
                 }
             	
             	while(matcher1.find()){
@@ -105,19 +114,15 @@ public class StackOverflowUtil {
             	}
             	
             	for (String annotation : annotations) {
-            		session.save(new QuestionAnnotation(question, annotation));
+            		questionAnnotationRepository.save(new QuestionAnnotation(question, annotation));
             	}
             	
             	for (String exception : exceptions) {
-        			session.save(new QuestionException(question, exception));
+            		questionExceptionRepository.save(new QuestionException(question, exception));
                     
         		}
             }
             
         }
-
-        session.getTransaction().commit();
-
-        session.close();
     }
 }
