@@ -1,21 +1,22 @@
-package com.ufrn.entities;
+package com.ufrn.api.entities;
 
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "answers")
+@Table(name = "answer")
 public class Answer {
 
     @Id
-    private long id;
+    private Long id;
 
-    @Column
+    @Column(name="isAccepted")
     private boolean isAccepted;
 
     @Column
@@ -24,19 +25,19 @@ public class Answer {
     @Column(columnDefinition = "TEXT")
     private String body;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Question question;
 
-    @Column
+    @Column(name="creationDate")
     private LocalDateTime creationDate;
 
-    @Column
+    @Column(name="lastActivityDate")
     private LocalDateTime lastActivityDate;
 
     public Answer() {
     }
 
-    public Answer(long id, boolean isAccepted, int score, String body, Question question, LocalDateTime creationDate,
+    public Answer(Long id, boolean isAccepted, int score, String body, Question question, LocalDateTime creationDate,
             LocalDateTime lastActivityDate) {
         this.id = id;
         this.isAccepted = isAccepted;
@@ -47,11 +48,11 @@ public class Answer {
         this.lastActivityDate = lastActivityDate;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -1,16 +1,14 @@
 # Hibersafe
 
-## About
-
-Hibersafe is an application that mines StackOverflow using the StackExchange API to search for questions and answers related to Hibernate/JPA annotations. It's goal is to create a database to be used to alert developers that the use of some annotations may cause exceptional behaviours not detailed on the Hibernate's documentation.
-
-## Requirements to Run
-
 This application uses Java 11 and MySQL 5.7.34.
 
 Create your database and update the file `hibernate.cfg.xml` with your database connection properties.
 
 The database must be created using the default charset as utf8mb4, in order to store emojis that might appear on the questions.
+
+```
+create database hibersafe character set UTF8mb4 collate utf8mb4_bin;
+```
 
 ```xml
 <!-- Database connection settings -->

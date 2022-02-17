@@ -4,13 +4,13 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ufrn.entities.Answer;
-import com.ufrn.entities.Question;
+import com.ufrn.api.entities.Answer;
+import com.ufrn.api.entities.Question;
 
 public class AnswerDTO {
 
     @JsonProperty("answer_id")
-    private long answerId;
+    private Long answerId;
 
     @JsonProperty("is_accepted")
     private boolean isAccepted;
@@ -26,16 +26,29 @@ public class AnswerDTO {
 
     @JsonProperty("last_activity_date")
     private LocalDateTime lastActivityDate;
+    
+    public AnswerDTO() {
+    	
+    }
+    
+    public AnswerDTO(Answer answer) {
+    	setId(answer.getId());
+    	setAccepted(answer.isAccepted());
+    	setScore(answer.getScore());
+    	setBody(answer.getBody());
+    	setCreationDateLocalDate(answer.getCreationDate());
+    	setLastActivityDateLocalDate(answer.getLastActivityDate());
+    }
 
     public Answer toAnswer(Question question) {
         return new Answer(answerId, isAccepted, score, body, question, creationDate, lastActivityDate);
     }
 
-    public long getId() {
+    public Long getId() {
         return answerId;
     }
 
-    public void setId(long answerId) {
+    public void setId(Long answerId) {
         this.answerId = answerId;
     }
 
@@ -70,6 +83,10 @@ public class AnswerDTO {
     public void setCreationDate(long creationDate) {
         this.creationDate = LocalDateTime.ofEpochSecond(creationDate, 0, ZoneOffset.UTC);
     }
+    
+    public void setCreationDateLocalDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
+    }
 
     public LocalDateTime getLastActivityDate() {
         return lastActivityDate;
@@ -77,6 +94,10 @@ public class AnswerDTO {
 
     public void setLastActivityDate(long lastActivityDate) {
         this.lastActivityDate = LocalDateTime.ofEpochSecond(lastActivityDate, 0, ZoneOffset.UTC);
+    }
+    
+    public void setLastActivityDateLocalDate(LocalDateTime lastActivityDate) {
+        this.lastActivityDate = lastActivityDate;
     }
 
     @Override

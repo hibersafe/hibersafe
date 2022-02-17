@@ -1,18 +1,21 @@
-package com.ufrn.entities;
+package com.ufrn.api.entities;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "questions")
+@Table(name = "question")
 public class Question {
-
-    @Id
-    private long id;
+    
+	@Id
+    private Long id;
 
     @Column
     private String tags;
@@ -20,17 +23,27 @@ public class Question {
     @Column(columnDefinition = "TEXT")
     private String body;
 
-    @Column
+    @Column(name="creationDate")
     private LocalDateTime creationDate;
 
-    @Column
+    @Column(name="lastActivityDate")
     private LocalDateTime lastActivityDate;
+    
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
+    private List<Answer> answers;
 
     public Question() {
 
     }
+    
+    public Question(String tags, String body, LocalDateTime creationDate, LocalDateTime lastActivityDate) {
+        this.tags = tags;
+        this.body = body;
+        this.creationDate = creationDate;
+        this.lastActivityDate = lastActivityDate;
+    }
 
-    public Question(long id, String tags, String body, LocalDateTime creationDate, LocalDateTime lastActivityDate) {
+    public Question(Long id, String tags, String body, LocalDateTime creationDate, LocalDateTime lastActivityDate) {
         this.id = id;
         this.tags = tags;
         this.body = body;
@@ -38,15 +51,15 @@ public class Question {
         this.lastActivityDate = lastActivityDate;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getTags() {
+	public String getTags() {
         return tags;
     }
 
@@ -78,9 +91,19 @@ public class Question {
         this.lastActivityDate = lastActivityDate;
     }
 
-    @Override
-    public String toString() {
-        return "Question { \\n\\tbody: " + body + ", \\n\\tcreationDate: " + creationDate + ", \\n\\tid: " + id
-                + ", \\n\\tlastActivityDate: " + lastActivityDate + ", \\n\\ttags: " + tags + "}";
-    }
+	public List<Answer> getAnswers() {
+		return answers;
+	}
+
+	public void setAnswers(List<Answer> answers) {
+		this.answers = answers;
+	}
+
+	@Override
+	public String toString() {
+		return "Question [id=" + id + ", tags=" + tags + ", body=" + body + ", creationDate=" + creationDate
+				+ ", lastActivityDate=" + lastActivityDate + ", answers=" + answers + "]";
+	}
+
+	
 }

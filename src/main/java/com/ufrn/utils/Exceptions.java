@@ -10,7 +10,8 @@ public class Exceptions {
             + "|QueryParameterException" + "|QueryTimeoutException" + "|ResourceClosedException" + "|SessionException" + "|StaleObjectStateException"
             + "|StaleStateException" + "|TransactionException" + "|TransientObjectException" + "|TransientPropertyValueException" + "|TypeMismatchException" 
             + "|UnknownEntityTypeException" + "|UnknownProfileException" + "|UnresolvableObjectException" + "|UnsupportedLockAttemptException" 
-            + "|WrongClassException";
+            + "|WrongClassException" + "|ConstraintViolationException" + "|DataException" + "|GenericJDBCException" + "|JDBCConnectionException" 
+            + "|LockAcquisitionException" + "|LockTimeoutException" + "|SQLGrammarException";
 	
 	public Exceptions() {
 	}
