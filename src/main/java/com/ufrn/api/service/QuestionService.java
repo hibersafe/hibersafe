@@ -62,28 +62,9 @@ public class QuestionService {
         LongestCommonSubsequence lcs = new LongestCommonSubsequence();
         long startTime = System.nanoTime();
         
-        result.forEach(r -> {
-        	long startTime2 = System.nanoTime();
-        	String subsequence = String.valueOf(lcs.longestCommonSubsequence(message, r[2].toString()));
-			Integer indexCausedBy = r[2].toString().toUpperCase().indexOf("CAUSED BY:");
-			Integer indexExceptionInThread = r[2].toString().toUpperCase().indexOf("EXCEPTION IN THREAD");
-			
-			if (indexCausedBy >= 0 || indexExceptionInThread >= 0) {
-				questionResponseDTO.add(new QuestionResponseDTO(r[0].toString(), ((BigInteger) r[1]).intValue(), subsequence.length()));
-				if (!annotations.contains(r[0].toString())) {
-					annotations.add(r[0].toString());
-				}
-			}
-			long endTime2 = System.nanoTime();
-			long timeElapsed2 = endTime2 - startTime2;
-			System.out.println("Execution time in seconds: " + timeElapsed2 / 1000000000);
-        });
-        long endTime = System.nanoTime();
-		long timeElapsed = endTime - startTime;
-		System.out.println("Execution time in seconds: " + timeElapsed / 1000000000);
-		
-//		for (Object[] r : result) {
-//			String subsequence = String.valueOf(lcs.longestCommonSubsequence(message, r[2].toString()));
+//        result.forEach(r -> {
+//        	long startTime2 = System.nanoTime();
+//        	String subsequence = String.valueOf(lcs.longestCommonSubsequence(message, r[2].toString()));
 //			Integer indexCausedBy = r[2].toString().toUpperCase().indexOf("CAUSED BY:");
 //			Integer indexExceptionInThread = r[2].toString().toUpperCase().indexOf("EXCEPTION IN THREAD");
 //			
@@ -93,7 +74,28 @@ public class QuestionService {
 //					annotations.add(r[0].toString());
 //				}
 //			}
-//		}
+//			long endTime2 = System.nanoTime();
+//			long timeElapsed2 = endTime2 - startTime2;
+//			System.out.println("Execution time in seconds: " + timeElapsed2 / 1000000000);
+//        });
+        
+		
+		for (Object[] r : result) {
+			String subsequence = String.valueOf(lcs.longestCommonSubsequence(message, r[2].toString()));
+			Integer indexCausedBy = r[2].toString().toUpperCase().indexOf("CAUSED BY:");
+			Integer indexExceptionInThread = r[2].toString().toUpperCase().indexOf("EXCEPTION IN THREAD");
+			
+			if (indexCausedBy >= 0 || indexExceptionInThread >= 0) {
+				questionResponseDTO.add(new QuestionResponseDTO(r[0].toString(), ((BigInteger) r[1]).intValue(), subsequence.length()));
+				if (!annotations.contains(r[0].toString())) {
+					annotations.add(r[0].toString());
+				}
+			}
+		}
+		
+		long endTime = System.nanoTime();
+		long timeElapsed = endTime - startTime;
+		System.out.println("Execution time in seconds: " + timeElapsed / 1000000000);
 		
 		Collections.sort(questionResponseDTO, (q1, q2) -> q2.getSimilarityLength().compareTo(q1.getSimilarityLength()));
 		
