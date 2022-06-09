@@ -27,8 +27,8 @@ public class QuestionController {
 	@Autowired
 	private QuestionService questionService;
 	
-	@GetMapping("/all")
-	@ApiOperation(value = "Get all questions from database")
+	//@GetMapping("/all")
+	//@ApiOperation(value = "Get all questions from database")
 	public ResponseEntity<List<QuestionDTO>> getQuestions() {
 		
 		List<QuestionDTO> questions = questionService.getQuestions();
@@ -36,8 +36,8 @@ public class QuestionController {
 		return new ResponseEntity<List<QuestionDTO>>(questions, HttpStatus.OK);
 	}
 	
-	@GetMapping("/annotation/{annotation}")
-	@ApiOperation(value = "Get questions by annotation", notes = "Select an annotation to find questions from StackOverflow according to the following criteria: \n1. Annotation appears on question and at least one answer texts \n2. At least one answer was validated or upvoted ")
+	//@GetMapping("/annotation/{annotation}")
+	//@ApiOperation(value = "Get questions by annotation", notes = "Select an annotation to find questions from StackOverflow according to the following criteria: \n1. Annotation appears on question and at least one answer texts \n2. At least one answer was validated or upvoted ")
 	public ResponseEntity<List<QuestionDTO>> getQuestionsByAnnotation(@PathVariable AnnotationsEnum annotation) {
 		
 		List<QuestionDTO> questions = questionService.getQuestionsByAnnotation(annotation.toString());

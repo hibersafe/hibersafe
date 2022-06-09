@@ -4,28 +4,28 @@ import java.util.List;
 
 public class ResponseDTO {
 	
-	List<TopSimilarityDTO> topSimilarity;
-	List<ReturnDTO> returnDTO;
+	List<TopSimilarity> topSimilarity;
+	List<AllResults> allResults;
 	
-	public ResponseDTO(List<TopSimilarityDTO> topSimilarity, List<ReturnDTO> returnDTO) {
+	public ResponseDTO(List<TopSimilarity> topSimilarity, List<AllResults> allResults) {
 		this.topSimilarity = topSimilarity;
-		this.returnDTO = returnDTO;
+		this.allResults = allResults;
 	}
 
-	public List<TopSimilarityDTO> getTopSimilarity() {
+	public List<TopSimilarity> getTopSimilarity() {
 		return topSimilarity;
 	}
 	
-	public void setTopSimilarity(List<TopSimilarityDTO> topSimilarity) {
+	public void setTopSimilarity(List<TopSimilarity> topSimilarity) {
 		this.topSimilarity = topSimilarity;
 	}
 	
-	public List<ReturnDTO> getReturnDTO() {
-		return returnDTO;
+	public List<AllResults> getReturnDTO() {
+		return allResults;
 	}
 	
-	public void setReturnDTO(List<ReturnDTO> returnDTO) {
-		this.returnDTO = returnDTO;
+	public void setReturnDTO(List<AllResults> allResults) {
+		this.allResults = allResults;
 	}
 	
 	

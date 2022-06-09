@@ -1,5 +1,6 @@
 package com.ufrn.api.repository;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -45,6 +46,6 @@ public interface QuestionRepository extends JpaRepository<Question, Integer>{
 			+ "AND "
 			+ "(a.isAccepted = 1 OR a.score > 0)  "
 			+ "ORDER BY qa.annotation", nativeQuery = true)
-	public List<Object[]> findQuestionByExceptionAlternative(@Param("exception") String exception);
+	public LinkedList<Object[]> findQuestionByExceptionAlternative(@Param("exception") String exception);
 
 }

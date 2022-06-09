@@ -5,7 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ReturnDTO {
+public class AllResults {
 	
 	@JsonProperty("annotation")
     private String annotation;
@@ -16,10 +16,10 @@ public class ReturnDTO {
     @JsonProperty("urls")
     private List<String> urls;
 
-	public ReturnDTO() {
+	public AllResults() {
 	}
 
-	public ReturnDTO(String annotation, Integer count, List<String> urls) {
+	public AllResults(String annotation, Integer count, List<String> urls) {
 		this.annotation = annotation;
 		this.count = count;
 		this.urls = urls;
