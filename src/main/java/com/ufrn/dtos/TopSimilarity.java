@@ -2,7 +2,7 @@ package com.ufrn.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class TopSimilarityDTO {
+public class TopSimilarity {
 	
 	@JsonProperty("annotation")
     private String annotation;
@@ -26,7 +26,7 @@ public class TopSimilarityDTO {
 		this.url = url;
 	}
 
-	public TopSimilarityDTO(String annotation, String url) {
+	public TopSimilarity(String annotation, String url) {
 		this.annotation = annotation;
 		this.url = url;
 	}

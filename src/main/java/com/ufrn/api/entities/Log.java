@@ -31,16 +31,20 @@ public class Log {
 	@Column
 	public String exception;
 	
+	@Column(columnDefinition="text")
+	public String message;
+	
 	public Log() {
 		
 	}
 
-	public Log(Calendar date, String questionIds, Integer countQuestionIds, String annotation, String exception) {
+	public Log(Calendar date, String questionIds, Integer countQuestionIds, String annotation, String exception, String message) {
 		this.date = date;
 		this.questionIds = questionIds;
 		this.countQuestionIds = countQuestionIds;
 		this.annotation = annotation;
 		this.exception = exception;
+		this.message = message;
 	}
 
 	public Integer getId() {
@@ -91,10 +95,19 @@ public class Log {
 		this.exception = exception;
 	}
 
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
 	@Override
 	public String toString() {
 		return "Log [id=" + id + ", date=" + date + ", questionIds=" + questionIds + ", countQuestionIds="
-				+ countQuestionIds + ", annotation=" + annotation + ", exception=" + exception + "]";
+				+ countQuestionIds + ", annotation=" + annotation + ", exception=" + exception + ", message=" + message
+				+ "]";
 	}
 
 }
