@@ -34,8 +34,9 @@ export default function Home(){
   const [stacktrace, setStacktrace] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const smallest = () => {
-    return resultsA.length < resultsB.length ? resultsA.length : resultsB.length;
+  const smallestNotZero = () => {
+    let smallest = resultsA.length < resultsB.length ? resultsA.length : resultsB.length;
+    return smallest === 0 ? Number.MAX_VALUE : smallest;
   }
 
   const calculateResults = async () => {
@@ -51,17 +52,21 @@ export default function Home(){
 
         const value = Math.floor(Math.random() * (100 - 1)) + 1;
         if (value % 2 === 0){
-          returnInfoA.data.organic_results.forEach(async or => {
-            setResultsA(arr => [...arr, or.link]);
-          });
+          if (returnInfoA.data.organic_results){
+            returnInfoA.data.organic_results.forEach(async or => {
+              setResultsA(arr => [...arr, or.link]);
+            });
+          }
 
           returnInfoB.data.topSimilarity.forEach(async ts => {
             setResultsB(arr => [...arr, ts.url]);
           });
         }else{
-          returnInfoA.data.organic_results.forEach(async or => {
-            setResultsB(arr => [...arr, or.link]);
-          });
+          if (returnInfoA.data.organic_results){
+            returnInfoA.data.organic_results.forEach(async or => {
+              setResultsB(arr => [...arr, or.link]);
+            });
+          }
 
           returnInfoB.data.topSimilarity.forEach(async ts => {
             setResultsA(arr => [...arr, ts.url]);
@@ -87,22 +92,22 @@ export default function Home(){
         <select onChange={e => setException(e.target.value)}>
           {exceptions.map(exception => <option>{exception}</option>)}
         </select>
-        <textarea id="stacktrace" onChange={e => setStacktrace(e.target.value)} maxLength={1000}/>
+        <textarea id="stacktrace" onChange={e => setStacktrace(e.target.value)} maxLength={1200}/>
         <button onClick={calculateResults} disabled={!stacktrace}>
           Buscar
         </button>
       </div>
       {loading && 
       <img alt='Carregando...' height='100em' width='118em%' src='loading.gif'/>}
-      {resultsA.length > 0 && !loading &&
+      {(resultsA.length > 0 || resultsB.length > 0) && !loading &&
         <div className={styles.results}>
           <div className={styles.sideA}>
             <h2>Lado A</h2>
             <div className={styles.resultList}>
               {
-                resultsA.map((r, index) => index < smallest() && 
+                resultsA.length > 0 ? resultsA.map((r, index) => index < smallestNotZero() && 
                   <Results link={r} index={index} side={'A'} key={index}/>
-                )
+                ) : <p>Nenhum resultado encontrado!</p>
               }
             </div>
           </div>
@@ -111,9 +116,9 @@ export default function Home(){
           <h2>Lado B</h2>
             <div className={styles.resultList}>
             {
-                resultsB.map((r, index) => index < smallest() && 
+                resultsB.length > 0 ? resultsB.map((r, index) => index < smallestNotZero() && 
                   <Results link={r} index={index} side={'B'}  key={index}/>
-                )
+                ) : <p>Nenhum resultado encontrado!</p>
               }
             </div>
           </div>
