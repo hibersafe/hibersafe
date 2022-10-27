@@ -1,5 +1,5 @@
 export default function NotFound(){
   return (
-    <p>Não!</p>
+    <p>Não tem nada aqui.</p>
   )
 }

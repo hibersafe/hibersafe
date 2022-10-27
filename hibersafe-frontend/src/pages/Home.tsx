@@ -89,11 +89,11 @@ export default function Home(){
       <h1>Hibersafe</h1>
       <div className={styles.inputGroup}>
         <label>Selecione a exceção lançada e informe a stacktrace:</label>
-        <select onChange={e => setException(e.target.value)}>
+        <select onChange={e => setException(e.target.value)} disabled={loading}>
           {exceptions.map(exception => <option>{exception}</option>)}
         </select>
-        <textarea id="stacktrace" onChange={e => setStacktrace(e.target.value)} maxLength={1200}/>
-        <button onClick={calculateResults} disabled={!stacktrace}>
+        <textarea id="stacktrace" onChange={e => setStacktrace(e.target.value)} maxLength={1200} disabled={loading}/>
+        <button onClick={calculateResults} disabled={!stacktrace || loading}>
           Buscar
         </button>
       </div>
