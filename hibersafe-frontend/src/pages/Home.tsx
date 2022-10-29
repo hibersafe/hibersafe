@@ -47,7 +47,7 @@ export default function Home(){
     }else{
       setLoading(true);
       try{
-        let returnInfoA = await axios.get<any, GoogleAPI>(`https://api.scaleserp.com/search?api_key=10689D5EECF24286A6D38792B3366D3A&q=site:stackoverflow.com ${stacktrace}&flatten_results=true`);
+        let returnInfoA = await axios.get<any, GoogleAPI>(`https://api.scaleserp.com/search?api_key=${process.env.REACT_APP_SCALESERP_GOOGLE_API_KEY}&q=site:stackoverflow.com ${stacktrace}&flatten_results=true`);
         let returnInfoB = await axios.post<any, HibersafeAPI>(`http://localhost:8080/api/question/exceptionEnum/${exception}`, {stacktrace});
 
         const value = Math.floor(Math.random() * (100 - 1)) + 1;
