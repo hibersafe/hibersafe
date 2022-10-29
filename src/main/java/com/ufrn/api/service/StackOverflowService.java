@@ -50,10 +50,12 @@ public class StackOverflowService {
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest.newBuilder().GET()
-                .uri(URI.create("https://api.stackexchange.com/2.3/questions?" + "fromdate=1598918400&"
-                        + "todate=1630454400&" + "page=" + page + "&" + "pagesize=100&" + "order=asc&"
-                        + "sort=creation&" + "tagged=hibernate&" + "site=stackoverflow&"
-                        + "filter=!b*Ar.5VD4mpdg2L*VkuIiXMYmkK*r5"))
+                .uri(URI.create("https://api.stackexchange.com/2.3/questions?key=vtviiqbbd4qmJYPlsfYCKg((&" + "fromdate=1420070400&"
+                        + "todate=1662595200&" + "page=" + page + "&" + "pagesize=100&" + "order=asc&"
+                        + "sort=creation&" + "tagged=hibernate&" + "site=stackoverflow"
+                        + "&filter=!BLgprJqGKEK0a17JpVQydcQ22st_Xe"
+//                        + "&filter=!b*Ar.5VD4mpdg2L*VkuIiXMYmkK*r5"
+                        ))
                 .build();
 
         HttpResponse<byte[]> response = client.send(request, BodyHandlers.ofByteArray());
