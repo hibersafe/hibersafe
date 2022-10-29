@@ -27,3 +27,9 @@ hs_err_pid*
 .DS_Store
 .AppleDouble
 .LSOverride
+.idea
+.settings
+hibersafe.iml
+.idea/
+.settings/
+/.metadata/
