@@ -31,11 +31,17 @@ public class LogWeb {
 	@Column
 	public String url;
 	
+	@Column(columnDefinition = "TEXT")
+	public String stacktrace;
+	
+	@Column
+	public String exception;
+	
 	public LogWeb() {
 		
 	}
 
-	public LogWeb(Integer id, Integer idUsuario, Calendar date, Integer position, String estrategia, String url) {
+	public LogWeb(Integer id, Integer idUsuario, Calendar date, Integer position, String estrategia, String url, String stacktrace, String exception) {
 		super();
 		this.id = id;
 		this.idUsuario = idUsuario;
@@ -43,6 +49,8 @@ public class LogWeb {
 		this.position = position;
 		this.estrategia = estrategia;
 		this.url = url;
+		this.stacktrace = stacktrace;
+		this.exception = exception;
 	}
 
 	public Integer getId() {
@@ -91,6 +99,22 @@ public class LogWeb {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public String getStacktrace() {
+		return stacktrace;
+	}
+
+	public void setStacktrace(String stacktrace) {
+		this.stacktrace = stacktrace;
+	}
+
+	public String getException() {
+		return exception;
+	}
+
+	public void setException(String exception) {
+		this.exception = exception;
 	}
 
 }

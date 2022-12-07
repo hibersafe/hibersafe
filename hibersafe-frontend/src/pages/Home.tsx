@@ -38,11 +38,6 @@ export default function Home() {
   const [stacktrace, setStacktrace] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const smallestNotZero = () => {
-    let smallest = resultsA.length < resultsB.length ? resultsA.length : resultsB.length;
-    return smallest === 0 ? Number.MAX_VALUE : smallest;
-  }
-
   const log = async () => {
     try {
       var dados;
@@ -53,7 +48,7 @@ export default function Home() {
       if (estrategia === "B") {
         dados = resultsB;
       }
-      await axios.post<any, any>(`http://177.20.150.18:8090/api/log/`, {estrategia, id, dados})
+      await axios.post<any, any>(`http://177.20.150.18:8090/api/log/`, {estrategia, id, dados, stacktrace, exception})
     } catch (e) {
       console.log(e);
     }
@@ -127,14 +122,14 @@ export default function Home() {
       </div> : "URL Inválida!"}
       {loading && 
       <img alt='Carregando...' height='100em' width='118em%' src='loading.gif'/>}
-      {(resultsA.length > 0 || resultsB.length > 0) && !loading &&
+      {!loading &&
         <div className={styles.results}>
           {estrategia === "A" &&
           <div className={styles.sideA}>
             <h2>Resultados</h2>
             <div className={styles.resultList}>
               {
-                resultsA.length > 0 ? resultsA.map((r, index) => index < smallestNotZero() && 
+                resultsA.length > 0 ? resultsA.map((r, index) => 
                   <Results link={r} index={index} side={'A'} key={index}/>
                 ) : <p>Nenhum resultado encontrado!</p>
               }
@@ -145,7 +140,7 @@ export default function Home() {
           <h2>Resultados</h2>
             <div className={styles.resultList}>
             {
-                resultsB.length > 0 ? resultsB.map((r, index) => index < smallestNotZero() && 
+                resultsB.length > 0 ? resultsB.map((r, index) =>
                   <Results link={r} index={index} side={'B'}  key={index}/>
                 ) : <p>Nenhum resultado encontrado!</p>
               }

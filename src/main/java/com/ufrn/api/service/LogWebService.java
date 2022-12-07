@@ -18,8 +18,12 @@ public class LogWebService {
 	LogWebRepository logWebRepository;
 
 	public void insertLogsWeb(LogWebDTO logWeb) {
+		if (logWeb.getDados().length == 0) {
+			logWebRepository.save(new LogWeb(null, logWeb.getIdUsuario(), Calendar.getInstance(), -1, logWeb.getEstrategia(), null, logWeb.getStacktrace(), logWeb.getException()));
+		}
+		
 		for (int i = 0; i < logWeb.getDados().length; i++) {			
-			logWebRepository.save(new LogWeb(null, logWeb.getIdUsuario(), Calendar.getInstance(), i, logWeb.getEstrategia(), logWeb.getDados()[i]));
+			logWebRepository.save(new LogWeb(null, logWeb.getIdUsuario(), Calendar.getInstance(), i, logWeb.getEstrategia(), logWeb.getDados()[i], logWeb.getStacktrace(), logWeb.getException()));
 		}
 	}
 	
