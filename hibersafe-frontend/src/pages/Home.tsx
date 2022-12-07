@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Results from '../components/Results';
 import styles from './Home.module.scss';
 import axios from 'axios';
+import { useSearchParams } from 'react-router-dom';
 
 interface GoogleAPI {
   data: {
@@ -17,7 +18,10 @@ interface HibersafeAPI {
   };
 }
 
-export default function Home(){
+export default function Home() {
+  const [searchParams] = useSearchParams();
+  var estrategia = searchParams.get("estrategia");
+  var id = searchParams.get("id");
   const exceptions = ["AnnotationException", "AssertionFailure", "CallbackException", "DuplicateMappingException"
     ,"HibernateError", "HibernateException", "InstantiationException", "InvalidMappingException", "JDBCException", "LazyInitializationException"
     ,"MappingException", "MappingNotFoundException", "NonUniqueObjectException", "NonUniqueResultException", "ObjectDeletedException"
@@ -39,44 +43,66 @@ export default function Home(){
     return smallest === 0 ? Number.MAX_VALUE : smallest;
   }
 
-  const calculateResults = async () => {
+  const log = async () => {
+    try {
+      var dados;
+      if (estrategia === "A") {
+        dados = resultsA;
+      }
+
+      if (estrategia === "B") {
+        dados = resultsB;
+      }
+      await axios.post<any, any>(`http://177.20.150.18:8090/api/log/`, {estrategia, id, dados})
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  const calculateResultsA = async () => {
     setResultsA([]);
-    setResultsB([]);
     if (!stacktrace){
       alert('Informe uma stacktrace para continuar!');
     }else{
       setLoading(true);
       try{
         let returnInfoA = await axios.get<any, GoogleAPI>(`https://api.scaleserp.com/search?api_key=${process.env.REACT_APP_SCALESERP_GOOGLE_API_KEY}&q=site:stackoverflow.com ${stacktrace}&flatten_results=true`);
-        let returnInfoB = await axios.post<any, HibersafeAPI>(`http://localhost:8080/api/question/exceptionEnum/${exception}`, {stacktrace});
-
-        const value = Math.floor(Math.random() * (100 - 1)) + 1;
-        if (value % 2 === 0){
-          if (returnInfoA.data.organic_results){
-            returnInfoA.data.organic_results.forEach(async or => {
-              setResultsA(arr => [...arr, or.link]);
-            });
-          }
-
-          returnInfoB.data.topSimilarity.forEach(async ts => {
-            setResultsB(arr => [...arr, ts.url]);
-          });
-        }else{
-          if (returnInfoA.data.organic_results){
-            returnInfoA.data.organic_results.forEach(async or => {
-              setResultsB(arr => [...arr, or.link]);
-            });
-          }
-
-          returnInfoB.data.topSimilarity.forEach(async ts => {
-            setResultsA(arr => [...arr, ts.url]);
+        
+        if (returnInfoA.data.organic_results){
+          returnInfoA.data.organic_results.forEach(async or => {
+            setResultsA(arr => [...arr, or.link]);
           });
         }
 
+        await log();
+        
         setLoading(false);
       }catch(e){
         alert('Ocorreu algum erro. Por favor, tente novamente.');
         setResultsA([]);
+        setLoading(false);
+        console.log(e);
+      }
+    }
+  }
+
+  const calculateResultsB = async () => {
+    setResultsB([]);
+    if (!stacktrace){
+      alert('Informe uma stacktrace para continuar!');
+    }else{
+      setLoading(true);
+      try{
+        let returnInfoB = await axios.post<any, HibersafeAPI>(`http://177.20.150.18:8090/api/question/exceptionEnum/${exception}`, {stacktrace});
+        returnInfoB.data.topSimilarity.forEach(async ts => {
+          setResultsB(arr => [...arr, ts.url]);
+        });
+
+        await log();
+
+        setLoading(false);
+      }catch(e){
+        alert('Ocorreu algum erro. Por favor, tente novamente.');
         setResultsB([]);
         setLoading(false);
         console.log(e);
@@ -87,22 +113,25 @@ export default function Home(){
   return (
     <div className={styles.pageRoot}>
       <h1>Hibersafe</h1>
+      {(estrategia && id) ?
       <div className={styles.inputGroup}>
+        
         <label>Selecione a exceção lançada e informe a stacktrace:</label>
         <select onChange={e => setException(e.target.value)} disabled={loading}>
           {exceptions.map(exception => <option>{exception}</option>)}
         </select>
         <textarea id="stacktrace" onChange={e => setStacktrace(e.target.value)} maxLength={1200} disabled={loading}/>
-        <button onClick={calculateResults} disabled={!stacktrace || loading}>
+          <button onClick={estrategia === "A" ? calculateResultsA : (estrategia === "B" ? calculateResultsB : undefined)} disabled={!stacktrace || loading}>
           Buscar
         </button>
-      </div>
+      </div> : "URL Inválida!"}
       {loading && 
       <img alt='Carregando...' height='100em' width='118em%' src='loading.gif'/>}
       {(resultsA.length > 0 || resultsB.length > 0) && !loading &&
         <div className={styles.results}>
+          {estrategia === "A" &&
           <div className={styles.sideA}>
-            <h2>Lado A</h2>
+            <h2>Resultados</h2>
             <div className={styles.resultList}>
               {
                 resultsA.length > 0 ? resultsA.map((r, index) => index < smallestNotZero() && 
@@ -110,10 +139,10 @@ export default function Home(){
                 ) : <p>Nenhum resultado encontrado!</p>
               }
             </div>
-          </div>
-          <span className={styles.divider}/>
+            </div>}
+          {estrategia === "B" &&
           <div className={styles.sideB}>
-          <h2>Lado B</h2>
+          <h2>Resultados</h2>
             <div className={styles.resultList}>
             {
                 resultsB.length > 0 ? resultsB.map((r, index) => index < smallestNotZero() && 
@@ -121,7 +150,7 @@ export default function Home(){
                 ) : <p>Nenhum resultado encontrado!</p>
               }
             </div>
-          </div>
+          </div>}
         </div>
       }
     </div>
