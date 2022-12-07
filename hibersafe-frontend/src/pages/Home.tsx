@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Results from '../components/Results';
 import styles from './Home.module.scss';
 import axios from 'axios';
@@ -37,22 +37,7 @@ export default function Home() {
   const [resultsB, setResultsB] = useState<string[]>([]);
   const [stacktrace, setStacktrace] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-
-  const log = async () => {
-    try {
-      var dados;
-      if (estrategia === "A") {
-        dados = resultsA;
-      }
-
-      if (estrategia === "B") {
-        dados = resultsB;
-      }
-      await axios.post<any, any>(`http://localhost:8080/api/log/`, {estrategia, id, dados, stacktrace, exception})
-    } catch (e) {
-      console.log(e);
-    }
-  }
+  const [toLog, setToLog] = useState<boolean>(false); 
 
   const calculateResultsA = async () => {
     setResultsA([]);
@@ -69,7 +54,7 @@ export default function Home() {
           });
         }
 
-        await log();
+        setToLog(true);
         
         setLoading(false);
       }catch(e){
@@ -93,7 +78,7 @@ export default function Home() {
           setResultsB(arr => [...arr, ts.url]);
         });
 
-        await log();
+        setToLog(true);
 
         setLoading(false);
       }catch(e){
@@ -104,6 +89,20 @@ export default function Home() {
       }
     }
   }
+
+  useEffect(() => {
+    if (toLog && estrategia === "A") {
+      axios.post<any, any>(`http://localhost:8080/api/log/`, {estrategia, id, dados: resultsA, stacktrace, exception})
+    }
+    setToLog(false);
+  }, [estrategia, exception, id, resultsA, stacktrace, toLog]);
+
+  useEffect(() => {
+    if (toLog && estrategia === "B") {
+      axios.post<any, any>(`http://localhost:8080/api/log/`, {estrategia, id, dados: resultsB, stacktrace, exception})
+    }
+    setToLog(false);
+  }, [estrategia, exception, id, resultsB, stacktrace, toLog]);
 
   return (
     <div className={styles.pageRoot}>
