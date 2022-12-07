@@ -73,7 +73,7 @@ export default function Home() {
     }else{
       setLoading(true);
       try{
-        let returnInfoB = await axios.post<any, HibersafeAPI>(`http://localhost:8080/api/question/exceptionEnum/${exception}`, {stacktrace});
+        let returnInfoB = await axios.post<any, HibersafeAPI>(`http://177.20.150.18:8090/api/question/exceptionEnum/${exception}`, {stacktrace});
         returnInfoB.data.topSimilarity.forEach(async ts => {
           setResultsB(arr => [...arr, ts.url]);
         });
@@ -92,14 +92,14 @@ export default function Home() {
 
   useEffect(() => {
     if (toLog && estrategia === "A") {
-      axios.post<any, any>(`http://localhost:8080/api/log/`, {estrategia, id, dados: resultsA, stacktrace, exception})
+      axios.post<any, any>(`http://177.20.150.18:8090/api/log/`, {estrategia, id, dados: resultsA, stacktrace, exception})
     }
     setToLog(false);
   }, [estrategia, exception, id, resultsA, stacktrace, toLog]);
 
   useEffect(() => {
     if (toLog && estrategia === "B") {
-      axios.post<any, any>(`http://localhost:8080/api/log/`, {estrategia, id, dados: resultsB, stacktrace, exception})
+      axios.post<any, any>(`http://177.20.150.18:8090/api/log/`, {estrategia, id, dados: resultsB, stacktrace, exception})
     }
     setToLog(false);
   }, [estrategia, exception, id, resultsB, stacktrace, toLog]);
